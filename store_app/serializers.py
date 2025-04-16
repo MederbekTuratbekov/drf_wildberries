@@ -1,0 +1,159 @@
+from rest_framework import serializers
+from .models import UserProfile, Category, SubCategory, Product, ProductImage, Reviews, Cart, CartItem, Favorite, FavoriteItem
+from rest_framework_simplejwt.tokens import RefreshToken
+from django.contrib.auth import authenticate
+
+
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserProfile
+        fields = ('username', 'email', 'password', 'first_name', 'last_name',
+                  'user_age', 'user_phone_number', 'membership_status')
+        extra_kwargs = {'password': {'write_only': True}}
+
+    def create(self, validated_data):
+        user = UserProfile.objects.create_user(**validated_data)
+        return user
+
+    def to_representation(self, instance):
+        refresh = RefreshToken.for_user(instance)
+        return {
+            'user': {
+                'username': instance.username,
+                'email': instance.email,
+            },
+            'access': str(refresh.access_token),
+            'refresh': str(refresh),
+        }
+
+class LoginSerializer(serializers.Serializer):
+    username = serializers.CharField()
+    password = serializers.CharField(write_only=True)
+
+    def validate(self, data):
+        user = authenticate(**data)
+        if user and user.is_active:
+            return user
+        raise serializers.ValidationError("Неверные учетные данные")
+
+    def to_representation(self, instance):
+        refresh = RefreshToken.for_user(instance)
+        return {
+            'user': {
+                'username': instance.username,
+                'email': instance.email,
+            },
+            'access': str(refresh.access_token),
+            'refresh': str(refresh),
+        }
+
+# -----------------------------------------------------------------
+
+class UserProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserProfile
+        fields = '__all__'
+
+class UserProfileOwnerSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserProfile
+        fields = ['first_name', 'last_name']
+
+class UserProfileReviewSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserProfile
+        fields = ['first_name']
+
+class CategoryListSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Category
+        fields = ['id', 'icon_file', 'category_name']
+
+class SubCategorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SubCategory
+        fields = ['subcategory_name']
+
+class CategoryDetailSerializer(serializers.ModelSerializer):
+    sub_category = SubCategorySerializer(read_only=True, many=True)
+
+    class Meta:
+        model = Category
+        fields = ['category_name', 'sub_category']
+
+class SubCategoryListSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SubCategory
+        fields = ['id', 'subcategory_name']
+
+class ProductImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ProductImage
+        fields = ['image_file']
+
+class ProductListSerializer(serializers.ModelSerializer):
+    category = SubCategorySerializer()
+    product_created_date = serializers.DateTimeField(format('%d-%m-%y %H:%M'))
+    product_owner = UserProfileOwnerSerializer()
+    images_connect_product = ProductImageSerializer(read_only=True, many=True)
+    get_avg_rating = serializers.SerializerMethodField() # функциянын атын жазбасам катаа кетип туруп алды
+    get_count_review = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Product
+        fields = ['id', 'product_name', 'images_connect_product', 'category', 'product_price', 'product_created_date', 'is_original',
+                  'product_owner', 'get_avg_rating', 'get_count_review']
+
+    def get_avg_rating(self, obj):
+        return obj.get_avg_rating()
+
+    def get_count_review(self, obj):
+        return obj.get_count_review()
+
+class SubCategoryDetailSerializer(serializers.ModelSerializer):
+    sub_category_product = ProductListSerializer(read_only=True, many=True)
+
+    class Meta:
+        model = SubCategory
+        fields = ['subcategory_name', 'sub_category_product']
+
+class ReviewSerializer(serializers.ModelSerializer):
+    created_date = serializers.DateTimeField(format='%d-%m-%y %H:%M')
+    review_author = UserProfileReviewSerializer()
+
+    class Meta:
+        model = Reviews
+        fields = ['review_author', 'review_text', 'rating_stars', 'created_date']
+
+class ProductDetailSerializer(serializers.ModelSerializer):
+    category = SubCategorySerializer()
+    product_created_date = serializers.DateTimeField(format('%d-%m-%y %H:%M'))
+    product_owner = UserProfileOwnerSerializer()
+    images_connect_product = ProductImageSerializer(read_only=True, many=True)
+    reviews_connect_product = ReviewSerializer(read_only=True, many=True)
+
+    class Meta:
+        model = Product
+        fields = ['id', 'product_name', 'video_file', 'images_connect_product', 'category', 'product_price', 'product_created_date', 'is_original', 'article_number', 'description', 'product_owner', 'reviews_connect_product']
+
+class ProductSerializer(serializers.ModelSerializer):
+   class Meta:
+       model = Product
+       fields = '__all__'
+
+class CartSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Cart
+        fields = '__all__'
+
+class CartItemSerializer(serializers.ModelSerializer):
+    model = CartItem
+    fields = '__all__'
+
+class FavoriteSerializer(serializers.ModelSerializer):
+    model = Favorite
+    fields = '__all__'
+
+class FavoriteItemSerializer(serializers.ModelSerializer):
+    model = FavoriteItem
+    fields = '__all__'
