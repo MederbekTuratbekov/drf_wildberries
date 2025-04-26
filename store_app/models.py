@@ -92,7 +92,7 @@ class CartItem(models.Model):
 
     def get_total_price(self):
         if membership_status == 'gold':
-            return sum((self.item_quantity * self.product.product_price) * -0.5) # -50% discount
+            return sum((self.item_quantity * self.product.product_price) * -0.50) # -50% discount
         elif membership_status == 'silver':
             return sum((self.item_quantity * self.product.product_price) * -0.25) # -25% discount
         elif membership_status == 'bronze':
