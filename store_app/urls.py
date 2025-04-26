@@ -24,4 +24,7 @@ urlpatterns = [
     path('sub-categories/<int:pk>/', SubCategoryDetailAPIView.as_view(), name='sub-category_detail'),
     path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
     path('api/docs/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
+    path('cart/', CartViewSet.as_view(), name = 'cart_detail'),
+    path('cart_items/', CartItemViewSet.as_view({'get':'list', 'post':'create'}), name = 'cart_item'),
+    path('cart_items/<int:pk>/', CartItemViewSet.as_view({'put':'update', 'delete':'destroy'})),
 ]

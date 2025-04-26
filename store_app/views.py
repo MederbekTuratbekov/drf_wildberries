@@ -102,13 +102,28 @@ class ReviewsViewSet(viewsets.ModelViewSet):
     queryset = Reviews.objects.all()
     serializer_class = ReviewSerializer
 
-class CartViewSet(viewsets.ModelViewSet):
+class CartViewSet(generics.RetrieveAPIView):
     queryset = Cart.objects.all()
     serializer_class = CartSerializer
+
+    def get_queryset(self):
+        return Cart.objects.filter(product_owner = self.request.user)
+
+    def retrieve(self, request, *args, **kwargs):
+        cart, created = Cart.objects.get_or_create(product_owner = request.user)
+        serializer = self.get_serializer(cart)
+        return Response(serializer.data)
 
 class CartItemViewSet(viewsets.ModelViewSet):
     queryset = CartItem.objects.all()
     serializer_class = CartItemSerializer
+
+    def get_queryset(self):
+        return CartItem.objects.filter(cart__product_owner = self.request.user)
+
+    def perform_create(self, serializer):
+        cart, created = Cart.objects.get_or_create(product_owner = self.request.user)
+        serializer.seve(cart = cart)
 
 class FavoriteViewSet(viewsets.ModelViewSet):
     queryset = Favorite.objects.all()

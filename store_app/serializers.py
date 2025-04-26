@@ -141,19 +141,25 @@ class ProductSerializer(serializers.ModelSerializer):
        model = Product
        fields = '__all__'
 
+class CartItemSerializer(serializers.ModelSerializer):
+    product = ProductListSerializer(read_only=True)
+    product_id = serializers.PrimaryKeyRelatedField(queryset=Product.objects.all(), write_only=True, source='product')
+    class Meta:
+        model = CartItem
+        fields = ['id', 'product', 'product_id', 'item_quantity']
+
 class CartSerializer(serializers.ModelSerializer):
+    items = CartItemSerializer(many=True, read_only=True)
     class Meta:
         model = Cart
-        fields = '__all__'
-
-class CartItemSerializer(serializers.ModelSerializer):
-    model = CartItem
-    fields = '__all__'
+        fields = ['id', 'product_owner', 'items']
 
 class FavoriteSerializer(serializers.ModelSerializer):
-    model = Favorite
-    fields = '__all__'
+    class Meta:
+        model = Favorite
+        fields = '__all__'
 
 class FavoriteItemSerializer(serializers.ModelSerializer):
-    model = FavoriteItem
-    fields = '__all__'
+    class Meta:
+        model = FavoriteItem
+        fields = '__all__'
