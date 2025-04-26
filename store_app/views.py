@@ -129,6 +129,12 @@ class FavoriteViewSet(viewsets.ModelViewSet):
     queryset = Favorite.objects.all()
     serializer_class = FavoriteSerializer
 
+    def get_queryset(self):
+        return Favorite.objects.filter(profile=self.request.user)
+
 class FavoriteItemViewSet(viewsets.ModelViewSet):
     queryset = FavoriteItem.objects.all()
     serializer_class = FavoriteItemSerializer
+
+    def get_queryset(self):
+        FavoriteItem.objects.filter(carts__product_owner=self.request.user)

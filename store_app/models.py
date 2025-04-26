@@ -9,9 +9,9 @@ class UserProfile(AbstractUser):
     user_phone_number = PhoneNumberField(null=True, blank=True)
     account_created_date = models.DateField(auto_now_add=True)
     STATUS_CHOICES = (
-        ('gold', 'gold'),
-        ('silver', 'silver'),
-        ('bronze', 'bronze'),
+        ('gold', 'gold'), # - 50%
+        ('silver', 'silver'), # - 25%
+        ('bronze', 'bronze'), # - 10%
         ('simple', 'simple')
     )
     membership_status = models.CharField(choices=STATUS_CHOICES, default='simple')
@@ -79,6 +79,9 @@ class Cart(models.Model):
     def __str__(self):
         return f'{self.product_owner}'
 
+    def get_total_all_price(self):
+        return sum(i.get_total_price() for i in self.items.all())
+
 class CartItem(models.Model):
     cart = models.ForeignKey(Cart, on_delete=models.CASCADE, related_name='items')
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
@@ -86,6 +89,15 @@ class CartItem(models.Model):
 
     def __str__(self):
         return f'{self.product}, {self.item_quantity}'
+
+    def get_total_price(self):
+        if membership_status == 'gold':
+            return sum((self.item_quantity * self.product.product_price) * -0.5) # -50% discount
+        elif membership_status == 'silver':
+            return sum((self.item_quantity * self.product.product_price) * -0.25) # -25% discount
+        elif membership_status == 'bronze':
+            return sum((self.item_quantity * self.product.product_price) * -0.10) # -10% discount
+        return self.item_quantity * self.product.product_price
 
 class Favorite(models.Model):
     profile = models.OneToOneField(UserProfile, on_delete=models.CASCADE)
