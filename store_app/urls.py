@@ -9,6 +9,7 @@ from .views import (UserProfileViewSet, CategoryListAPIView, CategoryDetailAPIVi
 router = routers.SimpleRouter()
 router.register(r'users', UserProfileViewSet, basename = 'users'),
 
+
 urlpatterns = [
     path('', include(router.urls)),
     path('register/', RegisterView.as_view(), name = 'register'),
