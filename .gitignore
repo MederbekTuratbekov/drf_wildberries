@@ -1,1 +1,18 @@
-.env
+# Python
+__pycache__/
+.venv/
+venv/
+env/
+*.egg-info/
+dist/
+build/
+
+*.xml
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+Thumbs.db
+desktop.ini
