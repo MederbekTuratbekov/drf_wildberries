@@ -16,3 +16,6 @@ build/
 # OS
 Thumbs.db
 desktop.ini
+
+# скрываем ключ проекта
+.env
