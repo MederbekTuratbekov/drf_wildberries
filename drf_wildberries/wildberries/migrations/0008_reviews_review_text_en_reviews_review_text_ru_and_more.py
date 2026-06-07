@@ -7,7 +7,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('store_app', '0007_rename_user_cart_product_owner_and_more'),
+        ('wildberries', '0007_rename_user_cart_product_owner_and_more'),
     ]
 
     operations = [
@@ -24,6 +24,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='productimage',
             name='product',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='images_connect_product', to='store_app.product'),
+            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='images_connect_product', to='wildberries.product'),
         ),
     ]

@@ -7,23 +7,23 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('store_app', '0008_reviews_review_text_en_reviews_review_text_ru_and_more'),
+        ('wildberries', '0008_reviews_review_text_en_reviews_review_text_ru_and_more'),
     ]
 
     operations = [
         migrations.AlterField(
             model_name='product',
             name='category',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='sub_category_product', to='store_app.subcategory'),
+            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='sub_category_product', to='wildberries.subcategory'),
         ),
         migrations.AlterField(
             model_name='reviews',
             name='product',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='reviews_connect_product', to='store_app.product'),
+            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='reviews_connect_product', to='wildberries.product'),
         ),
         migrations.AlterField(
             model_name='subcategory',
             name='category',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='sub_category', to='store_app.category'),
+            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='sub_category', to='wildberries.category'),
         ),
     ]

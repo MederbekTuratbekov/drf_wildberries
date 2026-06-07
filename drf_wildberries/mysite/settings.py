@@ -20,7 +20,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'store_app',
+    'wildberries',
     'rest_framework',
     'phonenumber_field',
     'allauth',
@@ -46,7 +46,7 @@ MIDDLEWARE = [
     "allauth.account.middleware.AccountMiddleware",
 ]
 
-ROOT_URLCONF = 'online_store.urls'
+ROOT_URLCONF = 'mysite.urls'
 
 TEMPLATES = [
     {
@@ -63,7 +63,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'online_store.wsgi.application'
+WSGI_APPLICATION = 'mysite.wsgi.application'
 
 DATABASES = {
     'default': {
@@ -113,7 +113,7 @@ MEDIA_URL = '/media/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-AUTH_USER_MODEL = 'store_app.UserProfile'
+AUTH_USER_MODEL = 'wildberries.UserProfile'
 
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',

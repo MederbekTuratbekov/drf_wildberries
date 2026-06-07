@@ -89,8 +89,8 @@ class Migration(migrations.Migration):
             name='FavoriteItem',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('favorite_cart', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='store_app.cart')),
-                ('product', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='store_app.product')),
+                ('favorite_cart', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='wildberries.cart')),
+                ('product', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='wildberries.product')),
             ],
         ),
         migrations.CreateModel(
@@ -98,8 +98,8 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('item_quantity', models.PositiveSmallIntegerField(default=1)),
-                ('cart', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='store_app.cart')),
-                ('item_product', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='store_app.product')),
+                ('cart', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='wildberries.cart')),
+                ('item_product', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='wildberries.product')),
             ],
         ),
         migrations.CreateModel(
@@ -107,7 +107,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('image_file', models.ImageField(upload_to='product_image/')),
-                ('product', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='store_app.product')),
+                ('product', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='wildberries.product')),
             ],
         ),
         migrations.CreateModel(
@@ -117,7 +117,7 @@ class Migration(migrations.Migration):
                 ('review_text', models.TextField()),
                 ('rating_stars', models.PositiveSmallIntegerField(choices=[(1, '1'), (2, '2'), (3, '3'), (4, '4'), (5, '5')])),
                 ('created_date', models.DateTimeField(auto_now_add=True)),
-                ('product', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='store_app.product')),
+                ('product', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='wildberries.product')),
                 ('review_author', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
             ],
         ),
@@ -126,12 +126,12 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('subcategory_name', models.CharField(max_length=32, unique=True)),
-                ('category', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='store_app.category')),
+                ('category', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='wildberries.category')),
             ],
         ),
         migrations.AddField(
             model_name='product',
             name='category',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='store_app.subcategory'),
+            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='wildberries.subcategory'),
         ),
     ]
