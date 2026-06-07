@@ -5,26 +5,28 @@ from phonenumber_field.modelfields import PhoneNumberField
 
 
 class UserProfile(AbstractUser):
+    STATUS_CHOICES = (
+        ('gold', 'gold'),
+        ('silver', 'silver'),
+        ('bronze', 'bronze'),
+        ('simple', 'simple'),
+    )
     user_age = models.PositiveSmallIntegerField(validators=[MinValueValidator(15), MaxValueValidator(70)], null=True, blank=True)
     user_phone_number = PhoneNumberField(null=True, blank=True)
     account_created_date = models.DateField(auto_now_add=True)
-    STATUS_CHOICES = (
-        ('gold', 'gold'), # - 50%
-        ('silver', 'silver'), # - 25%
-        ('bronze', 'bronze'), # - 10%
-        ('simple', 'simple')
-    )
-    membership_status = models.CharField(choices=STATUS_CHOICES, default='simple')
+    membership_status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='simple')
 
     def __str__(self):
-        return f'{self.first_name}, {self.last_name}'
+        return f'{self.first_name} {self.last_name}'
+
 
 class Category(models.Model):
     icon_file = models.FileField(upload_to='category_icons/', blank=True, null=True)
     category_name = models.CharField(max_length=32, unique=True)
 
     def __str__(self):
-        return f'{self.category_name}'
+        return self.category_name
+
 
 class SubCategory(models.Model):
     category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='sub_category')
@@ -32,6 +34,7 @@ class SubCategory(models.Model):
 
     def __str__(self):
         return f'{self.category} - {self.subcategory_name}'
+
 
 class Product(models.Model):
     category = models.ForeignKey(SubCategory, on_delete=models.CASCADE, related_name='sub_category_product')
@@ -48,20 +51,22 @@ class Product(models.Model):
         return self.product_name
 
     def get_avg_rating(self):
-        rating = self.reviews_connect_product.all()
-        if rating.exists():
-            return round(sum([i.rating_stars for i in rating]) / rating.count(), 1)
+        reviews = self.reviews_connect_product.all()
+        if reviews.exists():
+            return round(sum(r.rating_stars for r in reviews) / reviews.count(), 1)
         return 0
 
     def get_count_review(self):
         return self.reviews_connect_product.count()
+
 
 class ProductImage(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='images_connect_product')
     image_file = models.ImageField(upload_to='product_image/', null=True, blank=True)
 
     def __str__(self):
-        return f'{self.product}, {self.image_file}'
+        return f'{self.product} - {self.image_file}'
+
 
 class Reviews(models.Model):
     review_author = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
@@ -73,6 +78,7 @@ class Reviews(models.Model):
     def __str__(self):
         return f'{self.product} - {self.rating_stars}'
 
+
 class Cart(models.Model):
     product_owner = models.OneToOneField(UserProfile, on_delete=models.CASCADE)
 
@@ -82,22 +88,22 @@ class Cart(models.Model):
     def get_total_all_price(self):
         return sum(i.get_total_price() for i in self.items.all())
 
+
 class CartItem(models.Model):
     cart = models.ForeignKey(Cart, on_delete=models.CASCADE, related_name='items')
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     item_quantity = models.PositiveSmallIntegerField(default=1)
 
     def __str__(self):
-        return f'{self.product}, {self.item_quantity}'
+        return f'{self.product} - {self.item_quantity}'
 
     def get_total_price(self):
-        if membership_status == 'gold':
-            return sum((self.item_quantity * self.product.product_price) * -0.50) # -50% discount
-        elif membership_status == 'silver':
-            return sum((self.item_quantity * self.product.product_price) * -0.25) # -25% discount
-        elif membership_status == 'bronze':
-            return sum((self.item_quantity * self.product.product_price) * -0.10) # -10% discount
-        return self.item_quantity * self.product.product_price
+        status = self.cart.product_owner.membership_status
+        price = self.item_quantity * self.product.product_price
+        discounts = {'gold': 0.50, 'silver': 0.25, 'bronze': 0.10}
+        discount = discounts.get(status, 0)
+        return round(price * (1 - discount))
+
 
 class Favorite(models.Model):
     profile = models.OneToOneField(UserProfile, on_delete=models.CASCADE)
@@ -105,9 +111,10 @@ class Favorite(models.Model):
     def __str__(self):
         return f'{self.profile}'
 
+
 class FavoriteItem(models.Model):
-    carts = models.ForeignKey(Cart, on_delete=models.CASCADE)
-    products = models.ForeignKey(Product, on_delete=models.CASCADE)
+    favorite = models.ForeignKey(Favorite, on_delete=models.CASCADE, related_name='items')
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
 
     def __str__(self):
-        return f'{self.products}'
+        return f'{self.product}'
