@@ -91,8 +91,6 @@ LANGUAGE_CODE = 'en'
 
 TIME_ZONE = 'Asia/Bishkek'
 
-USE_L10N = True
-
 USE_I18N = True
 
 USE_TZ = True
@@ -138,7 +136,7 @@ SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=30),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
     "ROTATE_REFRESH_TOKENS": True,
-    "BLACKLIST_AFTER_ROTATION": True, # старый токендер чёрный списокко тушуусу
+    "BLACKLIST_AFTER_ROTATION": True,
     "UPDATE_LAST_LOGIN": False,
     "ALGORITHM": "HS256",
 }
