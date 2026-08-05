@@ -146,7 +146,23 @@ class SubCategoryDetailSerializer(serializers.ModelSerializer):
 class ProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
-        fields = '__all__'
+        fields = ['id', 'category', 'product_name', 'article_number', 'description',
+                  'is_original', 'video_file', 'product_price', 'product_created_date']
+        read_only_fields = ['product_created_date']
+
+    def validate_product_price(self, value):
+        if value <= 0:
+            raise serializers.ValidationError("Цена должна быть больше 0")
+        if value > 10_000_000:
+            raise serializers.ValidationError("Цена не может превышать 10 000 000")
+        return value
+
+    def validate_article_number(self, value):
+        if value <= 0:
+            raise serializers.ValidationError("Артикул должен быть положительным числом")
+        if len(str(value)) < 5:
+            raise serializers.ValidationError("Артикул должен содержать минимум 5 цифр")
+        return value
 
 
 class CartItemSerializer(serializers.ModelSerializer):
