@@ -96,11 +96,17 @@ class ProductCreateAPIView(generics.CreateAPIView):
     serializer_class = ProductSerializer
     permission_classes = [permissions.IsAuthenticated]
 
+    def perform_create(self, serializer):
+        serializer.save(product_owner=self.request.user)
+
 
 class ProductEditAPIView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
     permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        return Product.objects.filter(product_owner=self.request.user)
 
 
 class ReviewsViewSet(viewsets.ModelViewSet):
