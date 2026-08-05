@@ -133,6 +133,9 @@ class FavoriteViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         return Favorite.objects.filter(profile=self.request.user)
 
+    def perform_create(self, serializer):
+        serializer.save(profile=self.request.user)
+
 
 class FavoriteItemViewSet(viewsets.ModelViewSet):
     serializer_class = FavoriteItemSerializer
@@ -140,3 +143,7 @@ class FavoriteItemViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         return FavoriteItem.objects.filter(favorite__profile=self.request.user)
+
+    def perform_create(self, serializer):
+        favorite, _ = Favorite.objects.get_or_create(profile=self.request.user)
+        serializer.save(favorite=favorite)
