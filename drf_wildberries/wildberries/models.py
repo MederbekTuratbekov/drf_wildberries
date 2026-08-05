@@ -51,10 +51,8 @@ class Product(models.Model):
         return self.product_name
 
     def get_avg_rating(self):
-        reviews = self.reviews_connect_product.all()
-        if reviews.exists():
-            return round(sum(r.rating_stars for r in reviews) / reviews.count(), 1)
-        return 0
+        avg = self.reviews_connect_product.aggregate(avg=Avg('rating_stars'))['avg']
+        return round(avg, 1) if avg is not None else 0
 
     def get_count_review(self):
         return self.reviews_connect_product.count()
