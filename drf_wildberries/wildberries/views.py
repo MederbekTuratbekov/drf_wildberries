@@ -126,15 +126,13 @@ class CartItemViewSet(viewsets.ModelViewSet):
         serializer.save(cart=cart)
 
 
-class FavoriteViewSet(viewsets.ModelViewSet):
+class FavoriteViewSet(generics.RetrieveAPIView):
     serializer_class = FavoriteSerializer
     permission_classes = [permissions.IsAuthenticated]
 
-    def get_queryset(self):
-        return Favorite.objects.filter(profile=self.request.user)
-
-    def perform_create(self, serializer):
-        serializer.save(profile=self.request.user)
+    def retrieve(self, request, *args, **kwargs):
+        favorite, _ = Favorite.objects.get_or_create(profile=request.user)
+        return Response(FavoriteSerializer(favorite).data)
 
 
 class FavoriteItemViewSet(viewsets.ModelViewSet):
