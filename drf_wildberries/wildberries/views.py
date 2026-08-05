@@ -5,6 +5,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import OrderingFilter, SearchFilter
 from .filters import ProductFilter
+from django.db.models import Avg, Count
 from .models import UserProfile, Category, SubCategory, Product, Reviews, Cart, CartItem, Favorite, FavoriteItem
 from .serializers import (UserProfileSerializer, CategoryListSerializer, SubCategoryListSerializer,
                           CategoryDetailSerializer, SubCategoryDetailSerializer, ProductSerializer,
@@ -73,7 +74,10 @@ class SubCategoryDetailAPIView(generics.RetrieveAPIView):
 
 
 class ProductListAPIView(generics.ListAPIView):
-    queryset = Product.objects.all()
+    queryset = Product.objects.select_related('category', 'product_owner').prefetch_related('images_connect_product').annotate(
+        avg_rating=Avg('reviews_connect_product__rating_stars'),
+        count_review=Count('reviews_connect_product', distinct=True),
+    )
     serializer_class = ProductListSerializer
     permission_classes = [permissions.IsAuthenticated]
     filter_backends = [DjangoFilterBackend, OrderingFilter, SearchFilter]
