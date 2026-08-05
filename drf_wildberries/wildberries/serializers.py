@@ -175,10 +175,12 @@ class CartSerializer(serializers.ModelSerializer):
 
 class FavoriteItemSerializer(serializers.ModelSerializer):
     product = ProductListSerializer(read_only=True)
+    product_id = serializers.PrimaryKeyRelatedField(queryset=Product.objects.all(), write_only=True, source='product')
 
     class Meta:
         model = FavoriteItem
-        fields = ['id', 'favorite', 'product']
+        fields = ['id', 'favorite', 'product', 'product_id']
+        read_only_fields = ['favorite']
 
 
 class FavoriteSerializer(serializers.ModelSerializer):
