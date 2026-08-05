@@ -1,3 +1,4 @@
+from django.db.models import Avg, Count
 from rest_framework import viewsets, permissions, generics, status
 from rest_framework.response import Response
 from rest_framework_simplejwt.views import TokenObtainPairView
@@ -5,7 +6,6 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import OrderingFilter, SearchFilter
 from .filters import ProductFilter
-from django.db.models import Avg, Count
 from .models import UserProfile, Category, SubCategory, Product, Reviews, Cart, CartItem, Favorite, FavoriteItem
 from .serializers import (UserProfileSerializer, CategoryListSerializer, SubCategoryListSerializer,
                           CategoryDetailSerializer, SubCategoryDetailSerializer, ProductSerializer,
