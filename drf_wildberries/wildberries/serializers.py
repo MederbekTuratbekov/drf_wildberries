@@ -11,6 +11,10 @@ class UserSerializer(serializers.ModelSerializer):
         extra_kwargs = {'password': {'write_only': True}}
 
     def create(self, validated_data):
+        # На случай если в fields случайно попадут is_staff/is_superuser —
+        # публичная регистрация не должна их принимать никогда.
+        validated_data.pop('is_staff', None)
+        validated_data.pop('is_superuser', None)
         return UserProfile.objects.create_user(**validated_data)
 
     def to_representation(self, instance):
