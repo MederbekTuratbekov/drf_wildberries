@@ -40,7 +40,7 @@ class Product(models.Model):
     category = models.ForeignKey(SubCategory, on_delete=models.CASCADE, related_name='sub_category_product')
     product_name = models.CharField(max_length=64)
     product_owner = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
-    article_number = models.PositiveSmallIntegerField(unique=True)
+    article_number = models.PositiveIntegerField(unique=True)
     description = models.TextField()
     is_original = models.BooleanField(default=False)
     video_file = models.FileField(upload_to='product_videos/', null=True, blank=True)
