@@ -109,19 +109,16 @@ class ProductListSerializer(serializers.ModelSerializer):
     product_created_date = serializers.DateTimeField(format='%d-%m-%y %H:%M', read_only=True)
     product_owner = UserProfileOwnerSerializer(read_only=True)
     images_connect_product = ProductImageSerializer(read_only=True, many=True)
-    get_avg_rating = serializers.SerializerMethodField()
-    get_count_review = serializers.SerializerMethodField()
+    avg_rating = serializers.SerializerMethodField()
+    count_review = serializers.IntegerField(read_only=True)
 
     class Meta:
         model = Product
         fields = ['id', 'product_name', 'images_connect_product', 'category', 'product_price',
-                  'product_created_date', 'is_original', 'product_owner', 'get_avg_rating', 'get_count_review']
+                  'product_created_date', 'is_original', 'product_owner', 'avg_rating', 'count_review']
 
     def get_avg_rating(self, obj):
-        return obj.get_avg_rating()
-
-    def get_count_review(self, obj):
-        return obj.get_count_review()
+        return round(obj.avg_rating, 1) if obj.avg_rating is not None else 0
 
 
 class ProductDetailSerializer(serializers.ModelSerializer):
