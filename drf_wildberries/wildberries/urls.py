@@ -36,6 +36,7 @@ urlpatterns = [
     path('cart-items/', CartItemViewSet.as_view({'get': 'list', 'post': 'create'}), name='cart-items'),
     path('cart-items/<int:pk>/', CartItemViewSet.as_view({'put': 'update', 'delete': 'destroy'}), name='cart-items-detail'),
 
-    path('favorites/', FavoriteViewSet.as_view({'get': 'list'}), name='favorites'),
-    path('favorite-items/', FavoriteItemViewSet.as_view({'get': 'list'}), name='favorite-items'),
+    path('favorites/', FavoriteViewSet.as_view({'get': 'list', 'post': 'create'}), name='favorites'),
+    path('favorite-items/', FavoriteItemViewSet.as_view({'get': 'list', 'post': 'create'}), name='favorite-items'),
+    path('favorite-items/<int:pk>/', FavoriteItemViewSet.as_view({'delete': 'destroy'}), name='favorite-items-detail'),
 ]
